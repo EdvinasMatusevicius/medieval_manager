@@ -4,14 +4,31 @@ security:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             lazy: true
-            provider: users_in_memory
+            provider: app_user_provider
+            custom_authenticator: App\Security\LoginFormAuthenticator
+            logout:
+                path: app_logout
+                # where to redirect after logout
+                # target: app_any_route
+
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
+                # by default, the feature is enabled by checking a checkbox in the
+                # login form, uncomment the following line to always enable it.
+                #always_remember_me: true
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -22,8 +39,16 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: '^/$', roles: PUBLIC_ACCESS }           # For app_home (if it's the root path)
+        - { path: '^/login$', roles: PUBLIC_ACCESS }      # For app_login
+        - { path: '^/register$', roles: PUBLIC_ACCESS }   # For app_register
+        # The logout path defined in `firewalls.main.logout.path` handles the logout action.
+        # If you have a GET page for /logout that users can navigate to before POSTing or
+        # if the logout mechanism itself needs to be explicitly public via path:
+        # - { path: '^/logout$', roles: PUBLIC_ACCESS } # Generally covered by logout config, but can be explicit
+
+        # 2. all other paths require user
+        - { path: '^/', roles: ROLE_USER }
 
 when@test:
     security:
