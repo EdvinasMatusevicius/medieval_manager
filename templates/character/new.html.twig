@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create new character{% endblock %}
+
+{% block body %}
+    <div class="example-wrapper">
+        <h1>Create new character</h1>
+
+        <form method="post">
+            {{ form_start(form) }}
+                <div>
+                    {{ form_label(form.name, 'Character Name', {'label_attr': {'class': 'custom-label'}}) }}
+                    {{ form_widget(form.name, {'attr': {'class': 'custom-input'}}) }}
+                    <div class="error-message">
+                        {{ form_errors(form.name) }}
+                    </div>
+                </div>
+
+                <button type="submit" class="custom-button">Create Character</button>
+            {{ form_end(form) }}
+        </form>
+    </div>
+{% endblock %}

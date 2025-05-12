@@ -4,7 +4,7 @@ namespace App\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-final class CharacterSelectionControllerTest extends WebTestCase
+final class CharacterControllerTest extends WebTestCase
 {
     public function testIndex(): void
     {
