@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Character;
 use App\Form\CharacterTypeForm;
 use App\Repository\CharacterRepository;
+use App\Service\NewPlayerSetupService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,9 +16,10 @@ use Symfony\Component\Routing\Attribute\Route;
 final class CharacterController extends AbstractController
 {
 
-    public function __construct(private CharacterRepository $characterRepository)
-    {
-    }
+    public function __construct(
+        private CharacterRepository $characterRepository,
+        private NewPlayerSetupService $newPlayerSetupService
+    ) {}
 
     #[Route('/', name: 'app_character_selection', methods:['GET'])]
     public function index(): Response
@@ -42,8 +44,7 @@ final class CharacterController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $character->setUser($user);
-            $this->characterRepository->save($character, true);
+            $this->newPlayerSetupService->setupNewCharacter($user, $character);
             return $this->redirectToRoute('app_character_selection');
         }
 

@@ -21,6 +21,9 @@ class Character
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    #[ORM\OneToOne(mappedBy: 'owner', cascade: ['persist', 'remove'])]
+    private ?Tavern $tavern = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -46,6 +49,23 @@ class Character
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getTavern(): ?Tavern
+    {
+        return $this->tavern;
+    }
+
+    public function setTavern(Tavern $tavern): static
+    {
+        // set the owning side of the relation if necessary
+        if ($tavern->getOwner() !== $this) {
+            $tavern->setOwner($this);
+        }
+
+        $this->tavern = $tavern;
 
         return $this;
     }
