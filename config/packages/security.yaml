@@ -17,6 +17,10 @@ security:
             lazy: true
             provider: app_user_provider
             custom_authenticator: App\Security\LoginFormAuthenticator
+            # form_login:
+            #     login_path: app_login
+            #     check_path: app_login
+            #     enable_csrf: true
             logout:
                 path: app_logout
                 # where to redirect after logout
@@ -42,13 +46,8 @@ security:
         - { path: '^/$', roles: PUBLIC_ACCESS }           # For app_home (if it's the root path)
         - { path: '^/login$', roles: PUBLIC_ACCESS }      # For app_login
         - { path: '^/register$', roles: PUBLIC_ACCESS }   # For app_register
-        # The logout path defined in `firewalls.main.logout.path` handles the logout action.
-        # If you have a GET page for /logout that users can navigate to before POSTing or
-        # if the logout mechanism itself needs to be explicitly public via path:
-        # - { path: '^/logout$', roles: PUBLIC_ACCESS } # Generally covered by logout config, but can be explicit
-
-        # 2. all other paths require user
-        - { path: '^/', roles: ROLE_USER }
+        
+        - { path: '^/', roles: ROLE_USER}
 
 when@test:
     security:
