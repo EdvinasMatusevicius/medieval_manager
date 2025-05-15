@@ -21,6 +21,9 @@
                     <input type="hidden" name="_token" value="{{ csrf_token('delete-character-' ~ character.id) }}">
                     <button type="submit">Delete</button>
                 </form>
+                <form method="GET" action="{{ path('app_select_character', {'id': character.id}) }}">
+                    <button type="submit">Select Character</button>
+                </form>
             {% endfor %}
         </ul>
     {% else %}

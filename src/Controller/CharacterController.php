@@ -3,10 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Character;
+use App\Entity\User;
 use App\Form\CharacterTypeForm;
 use App\Repository\CharacterRepository;
+use App\Service\GameSessionManagerService;
 use App\Service\NewPlayerSetupService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +19,8 @@ final class CharacterController extends AbstractController
 
     public function __construct(
         private CharacterRepository $characterRepository,
-        private NewPlayerSetupService $newPlayerSetupService
+        private NewPlayerSetupService $newPlayerSetupService,
+        private GameSessionManagerService $gameSessionManagerService
     ) {}
 
     #[Route('/', name: 'app_character_selection', methods:['GET'])]
@@ -63,10 +65,30 @@ final class CharacterController extends AbstractController
         if ($character->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException('You cannot delete this character');
         }
-        
+        // TO DO double check if character is selected just in case and remove
         $this->characterRepository->remove($character);
         
         $this->addFlash('success', 'Character deleted successfully');
         return $this->redirectToRoute('app_character_selection');
+    }
+
+    #[Route('/select/{id}', name: 'app_select_character', methods:['GET'])]
+    public function select($id) {
+        $character = $this->characterRepository->find($id);
+        if (!$character) {
+            throw $this->createNotFoundException('Character not found');
+        }
+        /** @var User $user */
+        $user = $this->getUser();
+        
+        if ($user instanceof User) {
+            if ($character->getUser() !== $user) {
+                throw $this->createAccessDeniedException('You dont own this character');
+            }
+            $this->gameSessionManagerService->setSelectedCharacter($character);
+            return $this->redirectToRoute('app_game');
+        } else {
+            throw new \LogicException('Authenticated user is not an instance of App\Entity\User.');
+        }
     }
 }

@@ -42,8 +42,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Character::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $characters;
 
-    private ?Character $selectedCharacter = null; // user selected character during session
-
     public function __construct()
     {
         $this->characters = new ArrayCollection();
@@ -149,35 +147,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             }
         }
 
-        return $this;
-    }
-
-    /**
-     * gets selected character
-     */
-    public function getSelectedCharacter(): ?Character
-    {
-        return $this->selectedCharacter;
-    }
-
-    /**
-     * Sets the selected character for the user.
-     */
-    public function setSelectedCharacter(?Character $character): static
-    {
-        if ($character !== null && !$this->characters->contains($character)) {
-            throw new \InvalidArgumentException("The selected character does not belong to this user.");
-        }
-        $this->selectedCharacter = $character;
-        return $this;
-    }
-
-    /**
-     * Clears the selected character.
-     */
-    public function clearSelectedCharacter(): static
-    {
-        $this->selectedCharacter = null;
         return $this;
     }
 }
