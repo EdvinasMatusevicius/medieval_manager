@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class GameSessionManagerService
 {
+    private const SELECTED_CHAR_ID = 'SELECTED_CHAR_ID';
+
     public function __construct(
         private RequestStack $requestStack,
         private CharacterRepository $characterRepository,
@@ -27,7 +29,7 @@ class GameSessionManagerService
             return null;
         }
         
-        $characterId = $this->requestStack->getSession()->get('selected_character_id');
+        $characterId = $this->requestStack->getSession()->get(self::SELECTED_CHAR_ID);
         if (!$characterId) {
             return null;
         }
@@ -55,7 +57,7 @@ class GameSessionManagerService
         
         // If character is null, clear the selection
         if ($character === null) {
-            $this->requestStack->getSession()->remove('selected_character_id');
+            $this->requestStack->getSession()->remove(self::SELECTED_CHAR_ID);
             return;
         }
 
@@ -63,7 +65,7 @@ class GameSessionManagerService
             throw new \InvalidArgumentException("The selected character does not belong to this user.");
         }
 
-        $this->requestStack->getSession()->set('selected_character_id', $character->getId());
+        $this->requestStack->getSession()->set(self::SELECTED_CHAR_ID, $character->getId());
     }
     
     /**
@@ -79,6 +81,6 @@ class GameSessionManagerService
      */
     public function clearSelectedCharacter(): void
     {
-        $this->requestStack->getSession()->remove('selected_character_id');
+        $this->requestStack->getSession()->remove(self::SELECTED_CHAR_ID);
     }
 }
