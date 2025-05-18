@@ -24,6 +24,9 @@ class Character
     #[ORM\OneToOne(mappedBy: 'owner', cascade: ['persist', 'remove'])]
     private ?Tavern $tavern = null;
 
+    #[ORM\Column(type: 'integer')]
+    private int $personalGold = 0;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -66,6 +69,29 @@ class Character
         }
 
         $this->tavern = $tavern;
+
+        return $this;
+    }
+
+    public function getPersonalGold(): ?int
+    {
+        return $this->personalGold;
+    }
+
+    public function addPersonalGold(int $amount): static
+    {
+        if ($amount < 0) throw new \InvalidArgumentException('Cannot add negative amount of gold');
+        $this->personalGold += $amount;
+
+        return $this;
+    }
+
+    public function removePersonalGold(int $amount): static
+    {
+        if ($amount < 0) throw new \InvalidArgumentException('Cannot remove negative amount of gold');
+        if ($this->personalGold < $amount) throw new \DomainException('Not enough gold to remove');
+
+        $this->personalGold -= $amount;
 
         return $this;
     }
