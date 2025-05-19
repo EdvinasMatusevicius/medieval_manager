@@ -7,16 +7,13 @@ use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
 
 class UpdatePlayersTask
 {
-    private TimeProgressionService $timeProgressionService;
+    private const UPDATE_CHARACTERS_INTERVAL_SECONDS = 20;
 
-    public function __construct(TimeProgressionService $timeProgressionService)
-    {
-        $this->timeProgressionService = $timeProgressionService;
-    }
+    public function __construct(private TimeProgressionService $timeProgressionService) {}
 
-    #[AsPeriodicTask(15)]
+    #[AsPeriodicTask(self::UPDATE_CHARACTERS_INTERVAL_SECONDS)]
     public function run(): void
     {
-        $this->timeProgressionService->updateAllPlayers();
+        $this->timeProgressionService->updateAllPlayers(self::UPDATE_CHARACTERS_INTERVAL_SECONDS);
     }
 }

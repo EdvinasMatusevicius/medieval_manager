@@ -27,6 +27,9 @@ class Character
     #[ORM\Column(type: 'integer')]
     private int $personalGold = 0;
 
+    #[ORM\OneToOne(mappedBy: 'owningCharacter', cascade: ['persist', 'remove'])]
+    private ?CharacterTime $characterTime = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -92,6 +95,23 @@ class Character
         if ($this->personalGold < $amount) throw new \DomainException('Not enough gold to remove');
 
         $this->personalGold -= $amount;
+
+        return $this;
+    }
+
+    public function getCharacterTime(): ?CharacterTime
+    {
+        return $this->characterTime;
+    }
+
+    public function setCharacterTime(CharacterTime $characterTime): static
+    {
+        // set the owning side of the relation if necessary
+        if ($characterTime->getOwningCharacter() !== $this) {
+            $characterTime->setOwningCharacter($this);
+        }
+
+        $this->characterTime = $characterTime;
 
         return $this;
     }
