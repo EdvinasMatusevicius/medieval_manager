@@ -2,12 +2,15 @@
 
 namespace App\Entity;
 
+use App\Entity\Trait\InventoryTrait;
 use App\Repository\TavernRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TavernRepository::class)]
 class Tavern
 {
+    use InventoryTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

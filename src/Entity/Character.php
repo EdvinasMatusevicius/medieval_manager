@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Trait\InventoryTrait;
 use App\Repository\CharacterRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -9,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: '`character`')]
 class Character
 {
+    use InventoryTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

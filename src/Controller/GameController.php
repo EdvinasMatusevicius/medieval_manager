@@ -21,6 +21,9 @@ final class GameController extends AbstractController
 
         $selectedCharacter = $this->gameSessionManagerService->getSelectedCharacter();
         if (!$selectedCharacter) throw new \LogicException('User has no selected character.');
+        // $inventory = $selectedCharacter->getInventory();
+        // $inventoryItem = $inventory->getItems()->first();
+        // var_dump($inventoryItem->getItemName());
         return $this->render('game/index.html.twig', [
             'character' => $selectedCharacter,
         ]);
