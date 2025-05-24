@@ -33,6 +33,15 @@ class Character
     #[ORM\OneToOne(mappedBy: 'owningCharacter', cascade: ['persist', 'remove'])]
     private ?CharacterTime $characterTime = null;
 
+    #[ORM\OneToOne(
+        mappedBy: 'character',
+        targetEntity: InventoryOwnership::class,
+        fetch: 'LAZY',
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true
+    )]
+    private ?InventoryOwnership $inventoryOwnership = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -116,6 +125,23 @@ class Character
 
         $this->characterTime = $characterTime;
 
+        return $this;
+    }
+
+    protected function getInventoryOwnershipLink(): ?InventoryOwnership
+    {
+        return $this->inventoryOwnership;
+    }
+
+    public function setInventoryOwnership(?InventoryOwnership $ownership): self
+    {
+        if ($this->inventoryOwnership !== $ownership) {
+            $this->inventoryOwnership = $ownership;
+            if ($ownership !== null && $ownership->getCharacter() !== $this) {
+                $ownership->setCharacter($this);
+            }
+            $this->invalidateInventoryCache();
+        }
         return $this;
     }
 }

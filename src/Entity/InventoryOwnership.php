@@ -14,41 +14,21 @@ class InventoryOwnership
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private int $ownerId;
-
-    #[ORM\Column(length: 255)]
-    private string $ownerType;
-
-    #[ORM\OneToOne(inversedBy: 'ownership', targetEntity: Inventory::class)]
+    #[ORM\OneToOne(targetEntity: Inventory::class)]
     #[ORM\JoinColumn(nullable: false)]
     private Inventory $inventory;
+
+    #[ORM\OneToOne(inversedBy: 'inventoryOwnership', targetEntity: Character::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Character $character = null;
+
+    #[ORM\OneToOne(inversedBy: 'inventoryOwnership', targetEntity: Tavern::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Tavern $tavern = null;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getOwnerId(): int
-    {
-        return $this->ownerId;
-    }
-
-    public function setOwnerId(int $ownerId): self
-    {
-        $this->ownerId = $ownerId;
-        return $this;
-    }
-
-    public function getOwnerType(): string
-    {
-        return $this->ownerType;
-    }
-
-    public function setOwnerType(string $ownerType): self
-    {
-        $this->ownerType = $ownerType;
-        return $this;
     }
 
     public function getInventory(): Inventory
@@ -60,5 +40,32 @@ class InventoryOwnership
     {
         $this->inventory = $inventory;
         return $this;
+    }
+
+    public function getCharacter(): ?Character
+    {
+        return $this->character;
+    }
+
+    public function setCharacter(?Character $character): self
+    {
+        $this->character = $character;
+        return $this;
+    }
+
+    public function getTavern(): ?Tavern
+    {
+        return $this->tavern;
+    }
+
+    public function setTavern(?Tavern $tavern): self
+    {
+        $this->tavern = $tavern;
+        return $this;
+    }
+
+    public function getOwner(): object|null
+    {
+        return $this->character ?? $this->tavern ?? null;
     }
 } 

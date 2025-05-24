@@ -33,29 +33,24 @@ class NewPlayerSetupService
             $character->setTavern($tavern);
             $this->entityManager->persist($tavern);
 
-            // Flush first to get IDs
-            $this->entityManager->flush();
-
             // Create character's inventory
-            $characterInventory = new Inventory(50.0); // Personal inventory has 50kg capacity
-            $characterOwnership = new InventoryOwnership();
-            $characterOwnership->setOwnerId($character->getId())  // Now we have the ID
-                ->setOwnerType('character')
-                ->setInventory($characterInventory);
-            $characterInventory->setOwnership($characterOwnership);
-            $character->setInventory($characterInventory);
+            $characterInventory = new Inventory(50.0);
             $this->entityManager->persist($characterInventory);
+            
+            $characterOwnership = new InventoryOwnership();
+            $characterOwnership->setInventory($characterInventory);
+            $characterOwnership->setCharacter($character);
+            $character->setInventoryOwnership($characterOwnership);
             $this->entityManager->persist($characterOwnership);
 
             // Create tavern's inventory
-            $tavernInventory = new Inventory(500.0); // Tavern inventory has 500kg capacity
-            $tavernOwnership = new InventoryOwnership();
-            $tavernOwnership->setOwnerId($tavern->getId())  // Now we have the ID
-                ->setOwnerType('tavern')
-                ->setInventory($tavernInventory);
-            $tavernInventory->setOwnership($tavernOwnership);
-            $tavern->setInventory($tavernInventory);
+            $tavernInventory = new Inventory(500.0);
             $this->entityManager->persist($tavernInventory);
+            
+            $tavernOwnership = new InventoryOwnership();
+            $tavernOwnership->setInventory($tavernInventory);
+            $tavernOwnership->setTavern($tavern);
+            $tavern->setInventoryOwnership($tavernOwnership);
             $this->entityManager->persist($tavernOwnership);
             
             $characterTime = new CharacterTime();

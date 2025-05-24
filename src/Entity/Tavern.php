@@ -23,6 +23,15 @@ class Tavern
     #[ORM\JoinColumn(nullable: false)]
     private ?Character $owner = null;
 
+    #[ORM\OneToOne(
+        mappedBy: 'tavern',
+        targetEntity: InventoryOwnership::class,
+        fetch: 'LAZY',
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true
+    )]
+    private ?InventoryOwnership $inventoryOwnership = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -36,7 +45,6 @@ class Tavern
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -48,7 +56,23 @@ class Tavern
     public function setOwner(Character $owner): static
     {
         $this->owner = $owner;
+        return $this;
+    }
 
+    protected function getInventoryOwnershipLink(): ?InventoryOwnership
+    {
+        return $this->inventoryOwnership;
+    }
+
+    public function setInventoryOwnership(?InventoryOwnership $ownership): self
+    {
+        if ($this->inventoryOwnership !== $ownership) {
+            $this->inventoryOwnership = $ownership;
+            if ($ownership !== null && $ownership->getTavern() !== $this) {
+                $ownership->setTavern($this);
+            }
+            $this->invalidateInventoryCache();
+        }
         return $this;
     }
 }
